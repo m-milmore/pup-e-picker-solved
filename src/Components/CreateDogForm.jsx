@@ -1,47 +1,26 @@
 import { useState } from "react";
 import { dogPictures } from "../assets/dog-pictures";
-import { nanoid } from "nanoid";
 import { SECTION_INIT } from "./Section";
 
-export const CreateDogForm = ({ setDogs, setSectionBtns }) => {
-  const [newDog, setNewDog] = useState({
-    name: "doggie",
-    image: "/src/assets/blue-heeler.png",
-    description: "doogy doogy",
-    isFavorite: true,
-    id: nanoid(),
-  });
-
-  const handleOnChange = (e) => {
-    const value = e.target.value;
-    setNewDog({ ...newDog, [e.target.name]: value });
-  };
-
-  const handleSelect = ({ target: { value } }) => {
-    setNewDog({ ...newDog, image: value });
-  };
+export const CreateDogForm = ({ setSectionBtns, addDog }) => {
+  const [nameInput, setNameInput] = useState("");
+  const [descriptionInput, setDescriptionInput] = useState("");
+  const [imageInput, setImageInput] = useState("/src/assets/blue-heeler.png");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newDog.name === "" || newDog.description === "")
+    if (nameInput === "" || descriptionInput === "") {
       alert("Form incomplete");
-    else {
-      setDogs((prev) => [newDog, ...prev]);
-      setSectionBtns(SECTION_INIT);
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      const raw = JSON.stringify(newDog);
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow",
-      };
-      fetch(`http://localhost:3000/dogs`, requestOptions)
-        .then((response) => response.json())
-        .then((result) => alert("New dog successfully added!"))
-        .catch((error) => console.log("error = ", error));
+      return;
     }
+
+    setSectionBtns(SECTION_INIT);
+    addDog({
+      name: nameInput,
+      image: imageInput,
+      description: descriptionInput,
+      isFavorite: true,
+    });
   };
 
   return (
@@ -51,20 +30,22 @@ export const CreateDogForm = ({ setDogs, setSectionBtns }) => {
       <input
         type="text"
         name="name"
-        value={newDog.name}
-        onChange={handleOnChange}
+        value={nameInput}
+        onChange={(e) => setNameInput(e.target.value)}
       />
       <label htmlFor="description">Dog Description</label>
       <textarea
         name="description"
-        id=""
         cols="80"
         rows="10"
-        value={newDog.description}
-        onChange={handleOnChange}
+        value={descriptionInput}
+        onChange={(e) => setDescriptionInput(e.target.value)}
       ></textarea>
       <label htmlFor="picture">Select an Image</label>
-      <select id="" onChange={handleSelect} style={{ cursor: "pointer" }}>
+      <select
+        onChange={(e) => setImageInput(e.target.value)}
+        style={{ cursor: "pointer" }}
+      >
         {Object.entries(dogPictures).map(([label, pictureValue]) => {
           return (
             <option value={pictureValue} key={pictureValue}>

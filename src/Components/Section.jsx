@@ -8,7 +8,7 @@ export const SECTION_INIT = {
   createBtn: false,
 };
 
-export const Section = ({ label, dogs, setDogs }) => {
+export const Section = ({ dogs, setDogs, addDog, updateDog, deleteDog }) => {
   const [sectionBtns, setSectionBtns] = useState(SECTION_INIT);
   const [dogsToDisplay, setDogsToDisplay] = useState([]);
   const favDogsCount = dogs.filter((dog) => dog.isFavorite).length;
@@ -38,7 +38,7 @@ export const Section = ({ label, dogs, setDogs }) => {
   return (
     <section>
       <div className="container-header">
-        <div className="container-label">{label}</div>
+        <div className="container-label">Dogs</div>
         <div className="selectors">
           <div
             className={`selector ${sectionBtns.favBtn ? "active" : ""}`}
@@ -61,9 +61,13 @@ export const Section = ({ label, dogs, setDogs }) => {
         </div>
       </div>
       {sectionBtns.createBtn ? (
-        <CreateDogForm setDogs={setDogs} setSectionBtns={setSectionBtns}/>
+        <CreateDogForm setSectionBtns={setSectionBtns} addDog={addDog} />
       ) : (
-        <Dogs label={"All Dogs"} dogs={dogsToDisplay} setDogs={setDogs} />
+        <Dogs
+          dogs={dogsToDisplay}
+          updateDog={updateDog}
+          deleteDog={deleteDog}
+        />
       )}
     </section>
   );
